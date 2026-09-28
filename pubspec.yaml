@@ -1,0 +1,39 @@
+name: tugasakhir
+description: Aplikasi Absensi PPKD - Flutter + REST API (Clean Architecture)
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # State management
+  provider: ^6.1.2
+
+  # Networking
+  dio: ^5.4.3+1
+
+  # Local storage
+  shared_preferences: ^2.2.3
+
+  # Lokasi
+  geolocator: ^14.0.0
+  geocoding: ^4.0.0
+
+  # Google Maps
+  google_maps_flutter: ^2.6.1
+
+  # Util
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
