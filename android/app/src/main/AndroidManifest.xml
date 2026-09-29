@@ -10,7 +10,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="ISI_API_KEY_GOOGLE_MAPS"/>
+            android:value="AIzaSyDk_IqTjxDnhlwFcVf8bYfNR0qBtEGAyJw"/>
 
         <activity
             android:name=".MainActivity"

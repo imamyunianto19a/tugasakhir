@@ -52,6 +52,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Future<void> _handleIzin(BuildContext context) async {
+    final provider = context.read<AbsenProvider>();
+
+    final alasan = await showDialog<String>(
+      context: context,
+      builder: (_) => const _IzinDialog(),
+    );
+    if (alasan == null) return;
+
+    await provider.checkIn(status: AbsenModel.statusIzin, alasanIzin: alasan);
+    showToast(provider.lastMessage ?? 'Pengajuan izin gagal');
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileName = context.watch<ProfileProvider>().user?.name;
@@ -376,6 +389,62 @@ class _StatItem extends StatelessWidget {
         Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      ],
+    );
+  }
+}
+
+
+
+
+class _IzinDialog extends StatefulWidget {
+  const _IzinDialog();
+
+  @override
+  State<_IzinDialog> createState() => _IzinDialogState();
+}
+
+class _IzinDialogState extends State<_IzinDialog> {
+  final TextEditingController _controller = TextEditingController();
+  String? _errorText;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) {
+      setState(() => _errorText = 'Alasan izin wajib diisi');
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    Navigator.of(context).pop(text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Ajukan Izin'),
+      content: TextField(
+        controller: _controller,
+        maxLines: 2,
+        decoration: InputDecoration(
+          hintText: 'Alasan izin, mis. izin sakit',
+          errorText: _errorText,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Batal'),
+        ),
+        TextButton(
+          onPressed: _submit,
+          child: const Text('Kirim'),
+        ),
       ],
     );
   }

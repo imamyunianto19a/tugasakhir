@@ -5,16 +5,6 @@ import 'package:provider/provider.dart';
 import '../../data/models/absen_model.dart';
 import '../../providers/absen_provider.dart';
 
-/// 2.4 - Menampilkan Google Map untuk lokasi absen.
-///
-/// - Tanpa [absen]: menampilkan posisi perangkat saat ini.
-/// - Dengan [absen] (dibuka dari detail riwayat): menampilkan titik
-///   check-in dan check-out dari data server.
-///
-/// PENTING: agar Google Maps tampil, tambahkan API key di:
-/// - Android: android/app/src/main/AndroidManifest.xml
-///     <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR_KEY"/>
-/// - iOS: ios/Runner/AppDelegate.swift -> GMSServices.provideAPIKey("YOUR_KEY")
 class AbsenMapScreen extends StatefulWidget {
   final AbsenModel? absen;
   const AbsenMapScreen({super.key, this.absen});
@@ -34,7 +24,6 @@ class _AbsenMapScreenState extends State<AbsenMapScreen> {
   }
 
   Future<void> _initLocation() async {
-    // Lokasi perangkat hanya dibutuhkan jika tidak membuka detail absen.
     if (widget.absen == null) {
       final provider = context.read<AbsenProvider>();
       try {
