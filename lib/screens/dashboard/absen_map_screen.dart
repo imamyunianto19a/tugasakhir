@@ -50,41 +50,74 @@ class _AbsenMapScreenState extends State<AbsenMapScreen> {
       LatLng? checkInPos;
       if (absen.hasCheckInLocation) {
         checkInPos = LatLng(absen.checkInLat!, absen.checkInLng!);
-        markers.add(Marker(
-          markerId: const MarkerId('check_in'),
-          position: checkInPos,
-          infoWindow: InfoWindow(title: 'Check-in', snippet: absen.checkInAddress),
-        ));
+        markers.add(
+          Marker(
+            markerId: const MarkerId('check_in'),
+            position: checkInPos,
+            icon: absen.isIzin
+                ? BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueAzure,
+                  )
+                : BitmapDescriptor.defaultMarker,
+            infoWindow: InfoWindow(
+              title: absen.isIzin ? 'Lokasi Izin' : 'Check-in',
+              snippet: absen.isIzin && (absen.alasanIzin ?? '').isNotEmpty
+                  ? 'Alasan: ${absen.alasanIzin}'
+                  : absen.checkInAddress,
+            ),
+          ),
+        );
       }
       if (absen.hasCheckOutLocation) {
-        markers.add(Marker(
-          markerId: const MarkerId('check_out'),
-          position: LatLng(absen.checkOutLat!, absen.checkOutLng!),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-          infoWindow: InfoWindow(title: 'Check-out', snippet: absen.checkOutAddress),
-        ));
+        markers.add(
+          Marker(
+            markerId: const MarkerId('check_out'),
+            position: LatLng(absen.checkOutLat!, absen.checkOutLng!),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueOrange,
+            ),
+            infoWindow: InfoWindow(
+              title: 'Check-out',
+              snippet: absen.checkOutAddress,
+            ),
+          ),
+        );
       }
       target = checkInPos ?? _fallback;
-      info = absen.checkInAddress ?? 'Lokasi absen';
+      info = (absen.isIzin && (absen.alasanIzin ?? '').isNotEmpty)
+          ? 'Izin: ${absen.alasanIzin}\n${absen.checkInAddress ?? ''}'
+          : (absen.checkInAddress ?? 'Lokasi absen');
     } else {
       final position = provider.currentPosition;
-      target = position != null ? LatLng(position.latitude, position.longitude) : _fallback;
-      info = provider.currentAddress ?? 'Lat: ${target.latitude}, Lng: ${target.longitude}';
-      markers.add(Marker(
-        markerId: const MarkerId('lokasi_saya'),
-        position: target,
-        infoWindow: InfoWindow(title: 'Lokasi Anda', snippet: info),
-      ));
+      target = position != null
+          ? LatLng(position.latitude, position.longitude)
+          : _fallback;
+      info = provider.currentAddress ??
+          'Lat: ${target.latitude}, Lng: ${target.longitude}';
+      markers.add(
+        Marker(
+          markerId: const MarkerId('lokasi_saya'),
+          position: target,
+          infoWindow: InfoWindow(title: 'Lokasi Anda', snippet: info),
+        ),
+      );
     }
 
+    final String appBarTitle = absen != null
+        ? (absen.isIzin ? 'Detail Lokasi Izin' : 'Detail Lokasi Absen')
+        : 'Lokasi Saya';
+
     return Scaffold(
-      appBar: AppBar(title: Text(absen != null ? 'Detail Lokasi Absen' : 'Lokasi Saya')),
+      appBar: AppBar(title: Text(appBarTitle)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 GoogleMap(
-                  initialCameraPosition: CameraPosition(target: target, zoom: 17),
+                  initialCameraPosition: CameraPosition(
+                    target: target,
+                    zoom: 17,
+                  ),
                   markers: markers,
                   myLocationEnabled: absen == null,
                   myLocationButtonEnabled: absen == null,
